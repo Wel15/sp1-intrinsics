@@ -6,6 +6,9 @@ pub const BN254_SCALAR_MUL: u32 = 0x00_01_01_80;
 /// `BN254_SCALAR_MAC` syscall ID.
 pub const BN254_SCALAR_MAC: u32 = 0x00_01_01_81;
 
+/// `BN254_SCALAR_MULADD` syscall ID.
+pub const BN254_SCALAR_MULADD: u32 = 0x00_01_01_1F;
+
 /// Perform in-place scalar multiplication `p *= q`.
 ///
 /// # Safety
@@ -41,5 +44,26 @@ pub unsafe fn syscall_bn254_scalar_mul<P, Q>(p: *mut P, q: *const Q) {
 pub unsafe fn syscall_bn254_scalar_mac<R, T>(ret: *mut R, a: *const T, b: *const T) {
     unsafe {
         crate::syscall!(BN254_SCALAR_MAC, ret, &[a, b])
+    }
+}
+
+/// Perform scalar multiplication and addition `ret = a * b + c`.
+///
+/// # Safety
+///
+/// Behavior is undefined if any of the following conditions are violated:
+///
+/// * `ret` must be [valid] for writes of [`bn254::Fr`]
+/// * `a`, `b`, and `c` must be [valid] for reads of [`bn254::Fr`]
+/// * All pointers must be properly aligned and not overlap
+#[inline(always)]
+pub unsafe fn syscall_bn254_scalar_muladd<R, A, B, C>(
+    ret: *mut R,
+    a: *const A,
+    b: *const B,
+    c: *const C,
+) {
+    unsafe {
+        crate::syscall!(BN254_SCALAR_MULADD, ret, &[a, b, c])
     }
 }
