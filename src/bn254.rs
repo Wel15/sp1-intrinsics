@@ -64,21 +64,7 @@ pub unsafe fn syscall_bn254_scalar_muladd(
     c: *const [u32; 8],
 ) {
     unsafe {
-        crate::syscall!(BN254_SCALAR_MULADD, ret, a, b, c)
+        let args = [a, b, c];
+        crate::syscall!(BN254_SCALAR_MULADD, ret, &args)
     }
 }
-
-// If you need a generic version, you can also add this alternative implementation:
-/*
-#[inline(always)]
-pub unsafe fn syscall_bn254_scalar_muladd_generic<T>(
-    ret: *mut T,
-    a: *const T,
-    b: *const T,
-    c: *const T,
-) {
-    unsafe {
-        crate::syscall!(BN254_SCALAR_MULADD, ret, a, b, c)
-    }
-}
-*/
