@@ -57,13 +57,28 @@ pub unsafe fn syscall_bn254_scalar_mac<R, T>(ret: *mut R, a: *const T, b: *const
 /// * `a`, `b`, and `c` must be [valid] for reads of [`bn254::Fr`]
 /// * All pointers must be properly aligned and not overlap
 #[inline(always)]
-pub unsafe fn syscall_bn254_scalar_muladd<R, A, B, C>(
-    ret: *mut R,
-    a: *const A,
-    b: *const B,
-    c: *const C,
+pub unsafe fn syscall_bn254_scalar_muladd(
+    ret: *mut [u32; 8],
+    a: *const [u32; 8],
+    b: *const [u32; 8],
+    c: *const [u32; 8],
 ) {
     unsafe {
-        crate::syscall!(BN254_SCALAR_MULADD, ret, &[a, b, c])
+        crate::syscall!(BN254_SCALAR_MULADD, ret, a, b, c)
     }
 }
+
+// If you need a generic version, you can also add this alternative implementation:
+/*
+#[inline(always)]
+pub unsafe fn syscall_bn254_scalar_muladd_generic<T>(
+    ret: *mut T,
+    a: *const T,
+    b: *const T,
+    c: *const T,
+) {
+    unsafe {
+        crate::syscall!(BN254_SCALAR_MULADD, ret, a, b, c)
+    }
+}
+*/
