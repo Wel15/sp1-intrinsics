@@ -47,23 +47,21 @@ pub unsafe fn syscall_bn254_scalar_mac<R, T>(ret: *mut R, a: *const T, b: *const
     }
 }
 
-/// Perform scalar multiplication and addition `x = x + (a * b)`.
+/// Perform scalar multiplication and addition `ret = ret + (a * b)`.
 ///
 /// # Safety
 ///
 /// Behavior is undefined if any of the following conditions are violated:
 ///
-/// * `x` must be [valid] for writes of [`bn254::Fr`]
-/// * `a`, `b` must be [valid] for reads of [`bn254::Fr`]
-/// * All pointers must be properly aligned and not overlap
+/// * `ret` must be [valid] for writes of [`bn254::Fr`], and must remain valid even
+///   when `a` and `b` are read for [`bn254::Fr`].
+///
+/// * `a` and `b` must be [valid] for reads of [`bn254::Fr`].
+///
+/// * All pointers must be properly aligned and not overlap.
 #[inline(always)]
-pub unsafe fn syscall_bn254_scalar_muladd(
-    x: *mut [u32; 8],      
-    a: *const [u32; 8],    
-    b: *const [u32; 8],   
-) {
+pub unsafe fn syscall_bn254_scalar_muladd<R, T>(ret: *mut R, a: *const T, b: *const T) {
     unsafe {
-        let args = [a, b];
-        crate::syscall!(BN254_SCALAR_MULADD, x, &args)
+        crate::syscall!(BN254_SCALAR_MULADD, ret, &[a, b])
     }
 }
